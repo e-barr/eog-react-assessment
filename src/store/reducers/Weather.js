@@ -11,10 +11,17 @@ const initialState = {
   data: {}
 };
 
+
+
 const toF = c => (c * 9) / 5 + 32;
 
 const startLoading = (state, action) => {
-  return { ...state, loading: true };
+  const { latitude, longitude } = action
+  if (latitude && longitude) {
+    return { ...state, latitude, longitude }
+  } else {
+    return { ...state, loading: true };
+  }
 };
 
 const weatherIDReceived = (state, action) => {
@@ -24,16 +31,13 @@ const weatherIDReceived = (state, action) => {
 const weatherDataRecevied = (state, action) => {
   const { data } = action;
   if (!data["consolidated_weather"]) return state;
-  const weather = data.consolidated_weather[0];
+  const weather = data.consolidated_weather[data.consolidated_weather.length - 1]
   const { weather_state_name, the_temp } = weather;
-  const { latt_long, title: name } = data;
-  const [latitude, longitude] = latt_long.split(",");
+  const { title: name } = data;
 
   return {
     ...state,
     loading: false,
-    latitude,
-    longitude,
     temperatureinCelsius: the_temp,
     temperatureinFahrenheit: toF(the_temp),
     weather_state_name,

@@ -19,7 +19,7 @@ import * as actions from "../actions";
 
 function* watchWeatherIdReceived(action) {
   const { id } = action;
-  const { error, data } = yield call(API.findWeatherbyId, id);
+  const { error, data } = yield call(API.findWeatherById, id);
   if (error) {
     yield put({ type: actions.API_ERROR, code: error.code });
     yield cancel();
@@ -34,19 +34,19 @@ function* watchFetchWeather(action) {
     API.findLocationByLatLng,
     latitude,
     longitude
-  );
-  if (error) {
-    console.log({ error });
-    yield put({ type: actions.API_ERROR, code: error.code });
-    yield cancel();
-    return;
-  }
-  const location = data[0] ? data[0].woeid : false;
-  if (!location) {
-    yield put({ type: actions.API_ERROR });
-    yield cancel();
-    return;
-  }
+    );
+    if (error) {
+      console.log({ error });
+      yield put({ type: actions.API_ERROR, code: error.code });
+      yield cancel();
+      return;
+    }
+    const location = data[0] ? data[0].woeid : false;
+    if (!location) {
+      yield put({ type: actions.API_ERROR });
+      yield cancel();
+      return;
+    }
   yield put({ type: actions.WEATHER_ID_RECEIVED, id: location });
 }
 
