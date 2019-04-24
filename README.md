@@ -1,3 +1,3 @@
 ## Create React App Visualization
 
-Read more about this assessment here
+Use `yarn start` to run visualization.
