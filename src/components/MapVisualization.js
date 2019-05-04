@@ -4,7 +4,6 @@ import Card from "@material-ui/core/Card";
 import CardHeaderRaw from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import { withStyles } from "@material-ui/core/styles";
-import LinearProgress from "@material-ui/core/LinearProgress";
 import { withGoogleMap, GoogleMap, withScriptjs, Marker } from 'react-google-maps'
 
 import apiActions from '../store/api/index.js';
@@ -32,14 +31,19 @@ const styles = {
 // 3. Poll the API
 // 4. Submit your App
 
-const MyMapComponent = withScriptjs(withGoogleMap((props) => 
-  <GoogleMap
-    defaultZoom={4}
-    defaultCenter={{ lat: 29.763, lng: -95.363 }}
-  >
-    {props.isMarkerShown && <Marker position={{ lat: 29.763, lng: -95.363 }} />}
-  </GoogleMap>
-))
+const MyMapComponent = withScriptjs(withGoogleMap((props) => {
+  let coordinates = props.coordinates
+
+  return (
+    <GoogleMap
+      defaultZoom={4}
+      // defaultCenter={locationCoordinates}
+      defaultCenter={coordinates}
+    >
+      {props.isMarkerShown && <Marker position={coordinates} />}
+    </GoogleMap>
+  )
+}))
 
 class MapVisualization extends Component {
 
@@ -59,8 +63,8 @@ class MapVisualization extends Component {
 
   render() {
     const { classes } = this.props;
-    let latitude = this.props.latitude ? this.props.latitude : <LinearProgress />
-    let longitude = this.props.longitude ? this.props.longitude : <LinearProgress />
+    let latitude = this.props.latitude ? this.props.latitude : 29.763
+    let longitude = this.props.longitude ? this.props.longitude : -95.363
 
     return (
       <Card className={classes.card}>
@@ -72,6 +76,7 @@ class MapVisualization extends Component {
             loadingElement={<div style={{ height: `100%` }} />}
             containerElement={<div style={{ height: `400px` }} />}
             mapElement={<div style={{ height: `100%` }} />}
+            coordinates={{ lat: latitude, lng: longitude }}
           >
           </MyMapComponent>
         </CardContent>
