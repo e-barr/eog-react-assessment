@@ -3,12 +3,9 @@ import { connect } from "react-redux"
 import Card from "@material-ui/core/Card";
 import CardHeaderRaw from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
 import { withStyles } from "@material-ui/core/styles";
-
 import LinearProgress from "@material-ui/core/LinearProgress";
+import { withGoogleMap, GoogleMap, withScriptjs, Marker } from 'react-google-maps'
 
 import apiActions from '../store/api/index.js';
 
@@ -35,42 +32,48 @@ const styles = {
 // 3. Poll the API
 // 4. Submit your App
 
-let pollTime;
+const MyMapComponent = withScriptjs(withGoogleMap((props) => 
+  <GoogleMap
+    defaultZoom={4}
+    defaultCenter={{ lat: 29.763, lng: -95.363 }}
+  >
+    {props.isMarkerShown && <Marker position={{ lat: 29.763, lng: -95.363 }} />}
+  </GoogleMap>
+))
 
 class MapVisualization extends Component {
 
   componentDidMount() {
     const { sendLatLng } = this.props
     const { findDroneLocation } = apiActions
-    
+
     setInterval(() => {
       findDroneLocation().then(resp => {
         let { latitude, longitude } = resp.data[374]
-        pollTime = new Date(resp.data[374].timestamp)
         sendLatLng(latitude, longitude)
-      })
+        })
     }, 4000)
-
   }
+
+  
 
   render() {
     const { classes } = this.props;
-    let { temperatureinCelsius } = this.props
     let latitude = this.props.latitude ? this.props.latitude : <LinearProgress />
     let longitude = this.props.longitude ? this.props.longitude : <LinearProgress />
-    const temperatureinKelvin = temperatureinCelsius ? temperatureinCelsius + 273.15 : <LinearProgress />
-    let seconds = <LinearProgress />
-
-    if (pollTime) {
-      let diff = new Date(new Date() - pollTime).getSeconds()
-      seconds = `${diff} second${diff !== 1 ? 's' : "" } ago`
-    }
 
     return (
       <Card className={classes.card}>
         <CardHeader title="Map Visualization" />
         <CardContent>
-          hi        
+          <MyMapComponent
+            isMarkerShown
+            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEoztiOLMTzKRf_mrtJ9tVruWvyYZl6-U"
+            loadingElement={<div style={{ height: `100%` }} />}
+            containerElement={<div style={{ height: `400px` }} />}
+            mapElement={<div style={{ height: `100%` }} />}
+          >
+          </MyMapComponent>
         </CardContent>
       </Card>
     );
