@@ -26,18 +26,12 @@ const styles = {
   }
 };
 
-// 1. Connect to the Drone API
-// 2. Create your visualization
-// 3. Poll the API
-// 4. Submit your App
-
 const MyMapComponent = withScriptjs(withGoogleMap((props) => {
   let coordinates = props.coordinates
 
   return (
     <GoogleMap
       defaultZoom={4}
-      // defaultCenter={locationCoordinates}
       defaultCenter={coordinates}
     >
       {props.isMarkerShown && <Marker position={coordinates} />}
@@ -87,13 +81,8 @@ class MapVisualization extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    weatherId: state.weather.weatherId,
-    name: state.weather.name,
-    temperatureinCelsius: state.weather.temperatureinCelsius,
-    weather_state_name: state.weather.weather_state_name,
     latitude: state.weather.latitude,
-    longitude: state.weather.longitude,
-    data: state.weather.data
+    longitude: state.weather.longitude
   }
 }
 
@@ -102,12 +91,6 @@ const mapDisptachToProps = (dispatch) => {
     sendLatLng: (lat, lng) => {
       dispatch({ 
         type: actions.FETCH_WEATHER, latitude: lat, longitude: lng 
-      })
-    },
-    sendWeatherId: (id) => {
-      dispatch({
-        type: actions.WEATHER_ID_RECEIVED,
-        id
       })
     }
   }
